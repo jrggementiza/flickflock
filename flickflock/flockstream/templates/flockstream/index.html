@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+    Hello {{ current_user }}! You've reached the index page!
+    
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.photo }}
+        {{ form.title }}
+
+        <button type="submit">Upload</button>
+    </form>
+    
+    <!-- loop through all images of users in group that are public -->
+    <br>
+    {% for photo in photos %}
+        <br>
+        <h2>{{ photo.title }}</h2>
+        <img src="{{ photo.photo.url }}">
+    {% endfor photos %}
+
+    <p><a href="{% url 'flockstream:index' %}">Return to home</a></p>
+
+{% endblock %}
