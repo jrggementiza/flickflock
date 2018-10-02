@@ -1,15 +1,15 @@
 from django.contrib.auth import login, authenticate
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from django.contrib.auth import get_user_model
 
-from .forms import UserRegistrationForm, FlockCreationForm
-from .models import FlockGroup
+from .forms import UserRegistrationForm, GroupCreationForm
+from .models import Group, Membership
 
 
 def accounts(request):
     # sign up
     # login
+    # do splash.html
     pass
 
 
@@ -23,7 +23,7 @@ def signup(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                redirect_url = request.GET.get('next', '/')
+                redirect_url = request.GET.get('/')
                 return redirect(redirect_url)
             else:
                 message.error(request, 'Bad username or password')
@@ -32,26 +32,39 @@ def signup(request):
     return render(request, 'accounts/signup.html', {'form': form})
 
 
-def flock_register(request):
+@login_required
+def groups(request):
     # create a group?
     # join a group? request invite
     pass
 
 
-def flock_create(request):
-    # if user is not logged in if request.user.is_authenticated():
-        # redirect_url = request.GET.get('accounts/login')
-        # return redirect(redirect_url)
+@login_required
+def group_create(request):
+    current_user = request.user
     if request.method == 'POST':
-        form = FlockCreationForm(request.POST)
+        form = GroupCreationForm(request.POST)
+
+        # if group already created invalid
         if form.is_valid():
-            form.save()
+            print(form.cleaned_data)
+            # get the pieces for membership
+            group_member = current_user
             group_name = form.cleaned_data.get('group_name')
-            current_user = request.user
-            flock_group = FlockGroup(group_name=group_name, group_admin=current_user)
-            flock_group.save()
-            redirect_url = request.GET.get('next', '/')
-            return redirect(redirect_url)
+
+            # create a group
+            group = Group.objects.create(group_name=group_name)
+
+            # create + save membership
+            membership = Membership(group_user=current_user, group_name=group)
+            membership.save()
+
+            return redirect('/')
     else:
-        form = FlockCreationForm()
-    return render(request, 'accounts/flockcreate.html', {'form': form})
+        form = GroupCreationForm()
+    return render(request, 'accounts/groupcreate.html', {'form': form, 'current_user': current_user})
+
+
+@login_required
+def group_join(request):
+    pass

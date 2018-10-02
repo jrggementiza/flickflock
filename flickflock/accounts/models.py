@@ -2,24 +2,27 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 
+import datetime
+
 
 class CustomUser(AbstractUser):
+
     def __str__(self):
         return self.username
 
 
-class FlockGroup(models.Model):
-    group_name = models.CharField(max_length=100, blank=True, null=True, default='New Group')
-    group_admin = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.CASCADE) # this creates a dropdown of all users in db
+class Group(models.Model):
+    group_name = models.CharField(max_length=128)
+    group_members = models.ManyToManyField(settings.AUTH_USER_MODEL, through='Membership')
 
-    members = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='members')
     def __str__(self):
         return self.group_name
 
 
-class FlockGroupMember(models.Model):
-    flock_group_member = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='membership')
-    flock_group = models.ForeignKey(FlockGroup, on_delete=models.CASCADE, related_name='membership')
+class Membership(models.Model):
+    group_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    group_name = models.ForeignKey(Group, on_delete=models.CASCADE)
+    # date_joined = models.DateField(_("Date"), default=datetime.date.today)
 
     def __str__(self):
-        return f'{flock_group_member} is in {flock_group}'
+        return f'{self.group_user} is in {self.group_name}'

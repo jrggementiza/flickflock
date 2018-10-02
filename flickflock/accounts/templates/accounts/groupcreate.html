@@ -3,7 +3,7 @@
 {% block title %}Flock Create{% endblock %}
 
 {% block content %}
-  <h2>Sign up</h2>
+  Hello! {{ current_user }}!
   <form method="post">
     {% csrf_token %}
     {{ form.as_p }}

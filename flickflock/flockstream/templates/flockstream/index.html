@@ -4,24 +4,74 @@
 
 {% block content %}
 
-    Hello {{ current_user }}! You've reached the index page!
-    
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.photo }}
-        {{ form.title }}
+    <div class="container h-100">
+        <div class="row justify-content-center align-items-center">
+            <div class="col mx-auto text-center">
+                <!--  TO DO: replace button with "upload icon" like + from fontawesome -->
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#photo_upload">
+                  Upload a photo!
+                </button>
 
-        <button type="submit">Upload</button>
-    </form>
-    
-    <!-- loop through all images of users in group that are public -->
-    <br>
-    {% for photo in photos %}
-        <br>
-        <h2>{{ photo.title }}</h2>
-        <img src="{{ photo.photo.url }}">
-    {% endfor photos %}
+                <!-- Modal for upload-->
+                <div class="modal fade" id="photo_upload" tabindex="-1" role="dialog" aria-labelledby="photo_uploadLabel" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <form method="post" enctype="multipart/form-data">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">X</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            {% csrf_token %}
+                            {{ form.photo }}
+                            {{ form.title }}
+                            <!-- TO DO: Make checkbox pretty -->
+                            {{ form.is_public }} - <label>is this public?</label>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Upload!</button>
+                        </div>
+                        </form>
+                    </div>
+                  </div>
+                </div>
+                <br>
+                
+                <!-- add seemless prompt of groups to display. consider secondary navbar for photo and groups  -->
+                <div class="card mx-auto justify-content-center align-items-center" style="width: 400px;">
+                    {% for entity in groups %}
+                        <span class="badge badge-pill badge-secondary">{{ entity }}</span>
+                    {% endfor groups %}
+                
+                </div>
+                <br>
 
-    <p><a href="{% url 'flockstream:index' %}">Return to home</a></p>
+                <!-- loop through all images of users in group that are public -->
+                {% for photo in photos %}
+                    <div class="card mx-auto justify-content-center align-items-center" style="width: 400px;">
+                        <img class="card-img-top" src="{{ photo.photo.url }}">
+                        <div class="card-body">
+                            <h3 class="card-title">{{ photo.title }}</h3>
+                            <h6 class="card-subtitle text-muted">by {{ photo.published_by }}</h6>
+                            <!-- add when photo was posted -->
+                        </div>
+                        <!-- <div class="card">
+                            <img class="img-fluid" src="{{ photo.photo.url }}" alt="Card image cap">
+                            <div class="card-body">
+                                <h4 class="card-title">{{ photo.title }}</h4>
+                                <h6 class="card-subtitle mb-2 text-muted"> By {{ photo.published_by}} </h6>
+                            </div>
+                        </div> -->
+                        
+                    </div>
+                    <br>
+                {% endfor photos %}
+
+            </div>
+        </div>
+    </div>
 
 {% endblock %}
+
+<!--  model queries for user.photos and user.group -->
