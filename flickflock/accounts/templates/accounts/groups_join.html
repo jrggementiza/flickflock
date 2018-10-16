@@ -1,9 +1,18 @@
 {% extends 'base.html' %}
 
-{% load static %}
+{% block title %}Flock Create{% endblock %}
 
 {% block content %}
-
-Hello {{ current_user.username }}! Join a group!
-
-{% endblock %}
+  Hello! {{ current_user }}!
+  Join a group!
+    <form method="post">
+    {% csrf_token %}
+    {% for field in form %}
+        <div>
+            {{ field.errors }}
+            {{ field.html_name}} - {{ field }}
+        </div>
+        {% endfor %}
+        <button type="submit">Create Group!</button>
+    </form>
+{% endblock %}}
