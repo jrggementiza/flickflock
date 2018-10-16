@@ -10,6 +10,6 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(template_name="accounts/logout.html"), name="logout"),
     path('signup/', accounts_views.signup, name="signup"),
     path('groups/', accounts_views.groups, name="groups"),
-    path('groups/create', accounts_views.group_create, name="groupcreate"),
-    path('groups/join', accounts_views.group_join, name="groupcreate"),
+    path('groups/create', accounts_views.groups_create, name="groupcreate"),
+    path('groups/join', accounts_views.groups_join, name="groupcreate"),
 ]

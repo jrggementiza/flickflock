@@ -1,9 +1,9 @@
-from django.contrib.auth.forms import UserCreationForm
-
-from django.forms import ModelForm
-from .models import CustomUser, Group
-
 from django import forms
+from django.forms import ModelForm
+
+from .models import Person #, Group
+from django.contrib.sites.models import Site
+from django.contrib.auth.forms import UserCreationForm
 
 
 class UserRegistrationForm(UserCreationForm):
@@ -17,40 +17,24 @@ class UserRegistrationForm(UserCreationForm):
             'class': 'form-control',
             'placeholder': 'username@example.com',
         }))
-    password1 = forms.CharField(widget=forms.TextInput(
+    password1 = forms.CharField(widget=forms.PasswordInput(
         attrs={
             'class': 'form-control',
             'placeholder': 'password',
         }))
-    password2 = forms.CharField(widget=forms.TextInput(
+    password2 = forms.CharField(widget=forms.PasswordInput(
         attrs={
             'class': 'form-control',
             'placeholder': 'password',
         }))
 
     class Meta(UserCreationForm.Meta):
-        model = CustomUser
+        model = Person
         fields = ('username', 'email', 'password1', 'password2')
 
 
 class GroupCreationForm(ModelForm):
 
     class Meta():
-        model = Group
-        fields = ('group_name',)
-
-
-    def clean_group_name(self):
-        group_name = self.cleaned_data.get('group_name')
-        is_exists = Group.objects.filter(group_name=group_name).exists()
-        if is_exists:
-            # needs prompt
-            print('already exists in db!')
-            raise forms.ValidationError("group name already exists!")
-        return group_name
-
-
-    def clean(self):
-        data = self.cleaned_data
-        # use your logic for non field errors
-        return data
+        model = Site
+        fields = ('name',)

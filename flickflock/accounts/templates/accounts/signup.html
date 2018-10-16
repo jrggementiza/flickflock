@@ -4,23 +4,23 @@
 
 {% block content %}
 
-    <div class="container h-100">
-        <div class="row h-100 justify-content-center align-items-center">
-            <div class="col mx-auto text-center">
-                <form class="form" method="post">
-                  {% csrf_token %}
-                  {% for field in form %}
-                      <div class="form-group">
-                          {{ field.errors }}
-                          {{ field }}
-                      </div>
-                  {% endfor %}
-                  <div class="form-group">
-                      <button type="submit" class="btn-lg btn-block btn-primary">Sign Up!</button>
-                  </div>
-                </form>
-            </div>
-        </div>
-    </div>
+  <div class="container h-100">
+      <div class="row h-100 justify-content-center align-items-center">
+          <div class="col mx-auto text-center">
+              <form class="form" method="post">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="form-group">
+                        {{ field.errors }}
+                        {{ field }}
+                    </div>
+                {% endfor %}
+                <div class="form-group">
+                    <button type="submit" class="btn-lg btn-block btn-primary">Sign Up!</button>
+                </div>
+              </form>
+          </div>
+      </div>
+  </div>
 
 {% endblock %}}

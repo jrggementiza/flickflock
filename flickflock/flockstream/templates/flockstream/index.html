@@ -12,6 +12,8 @@
                   Upload a photo!
                 </button>
 
+                Hello {{ current_user.username }}! You're in group {{ current_user.group.name }}
+
                 <!-- Modal for upload-->
                 <div class="modal fade" id="photo_upload" tabindex="-1" role="dialog" aria-labelledby="photo_uploadLabel" aria-hidden="true">
                   <div class="modal-dialog" role="document">

@@ -3,14 +3,14 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 
 from .forms import UserRegistrationForm, GroupCreationForm
-from .models import Group, Membership
+from .models import Person
 
 
 def accounts(request):
     # sign up
     # login
     # do splash.html
-    pass
+    return render(request, 'accounts/accounts.html', {})
 
 
 def signup(request):
@@ -23,7 +23,7 @@ def signup(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                redirect_url = request.GET.get('/')
+                redirect_url = '/'
                 return redirect(redirect_url)
             else:
                 message.error(request, 'Bad username or password')
@@ -36,35 +36,39 @@ def signup(request):
 def groups(request):
     # create a group?
     # join a group? request invite
-    pass
+    return render(request, 'accounts/groups.html', {})
 
 
 @login_required
-def group_create(request):
+def groups_create(request):
     current_user = request.user
+    # current_user = Person.objects.get(username=request.user.username)
+    # if already in a group
     if request.method == 'POST':
-        form = GroupCreationForm(request.POST)
-
+        form = GroupCreationForm(request.POST, request.FILES)
         # if group already created invalid
+
         if form.is_valid():
-            print(form.cleaned_data)
-            # get the pieces for membership
-            group_member = current_user
-            group_name = form.cleaned_data.get('group_name')
-
-            # create a group
-            group = Group.objects.create(group_name=group_name)
-
-            # create + save membership
-            membership = Membership(group_user=current_user, group_name=group)
-            membership.save()
-
+            group = form.save(commit=False)
+            group.name = form.cleaned_data.get('name')
+            group.domain = str(group.name + '.' + 'example.com')
+            group.save()
+            current_user.group = group
+            current_user.save()
             return redirect('/')
     else:
         form = GroupCreationForm()
-    return render(request, 'accounts/groupcreate.html', {'form': form, 'current_user': current_user})
+    context = {
+        'form': form,
+        'current_user': current_user,
+    }
+    return render(request, 'accounts/groups_create.html', context)
 
 
 @login_required
-def group_join(request):
-    pass
+def groups_join(request):
+    current_user = request.user
+    context = {
+        'current_user': current_user,
+    }
+    return render(request, 'accounts/groups_join.html', context)
