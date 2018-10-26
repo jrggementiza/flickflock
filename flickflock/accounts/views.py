@@ -7,13 +7,6 @@ from .forms import UserRegistrationForm, GroupCreationForm
 from .models import Person
 
 
-def accounts(request):
-    # sign up
-    # login
-    # do splash.html
-    return render(request, 'accounts/accounts.html', {})
-
-
 def signup(request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
@@ -30,7 +23,10 @@ def signup(request):
                 message.error(request, 'Bad username or password')
     else:
         form = UserRegistrationForm()
-    return render(request, 'accounts/signup.html', {'form': form})
+    context = {
+        'form': form,
+    }
+    return render(request, 'accounts/signup.html', context)
 
 
 @login_required
@@ -43,7 +39,6 @@ def groups(request):
 @login_required
 def groups_create(request):
     current_user = request.user
-    # if already in a group
     if request.method == 'POST':
         form = GroupCreationForm(request.POST, request.FILES)
         # if group already created invalid

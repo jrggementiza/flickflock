@@ -20,6 +20,7 @@ class UserRegistrationForm(UserCreationForm):
     password1 = forms.CharField(widget=forms.PasswordInput(
         attrs={
             'class': 'form-control',
+            'label': 'Password',
             'placeholder': 'password',
         }))
     password2 = forms.CharField(widget=forms.PasswordInput(

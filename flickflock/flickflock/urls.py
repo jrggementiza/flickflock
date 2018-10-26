@@ -21,6 +21,6 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('', include('flockstream.urls', namespace="flockstream")),
+    path('', include('accounts.urls', namespace="accounts")),
     path('admin/', admin.site.urls),
-    path('accounts/', include('accounts.urls', namespace="accounts")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

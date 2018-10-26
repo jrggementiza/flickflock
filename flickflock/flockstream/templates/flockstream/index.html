@@ -4,17 +4,14 @@
 
 {% block content %}
 
+    <!-- Modal for upload-->
+    <!-- TO DO: replace button with "upload icon" like + from fontawesome -->
+    <!-- TO DO: Make checkbox pretty -->
     <div class="container h-100">
         <div class="row justify-content-center align-items-center">
-            <div class="col mx-auto text-center">
-                <!--  TO DO: replace button with "upload icon" like + from fontawesome -->
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#photo_upload">
                   Upload a photo!
                 </button>
-
-                Hello {{ current_user.username }}! You're in group {{ current_user.group.name }}
-
-                <!-- Modal for upload-->
                 <div class="modal fade" id="photo_upload" tabindex="-1" role="dialog" aria-labelledby="photo_uploadLabel" aria-hidden="true">
                   <div class="modal-dialog" role="document">
                     <div class="modal-content">
@@ -27,8 +24,7 @@
                         <div class="modal-body">
                             {% csrf_token %}
                             {{ form.photo }}
-                            {{ form.title }}
-                            <!-- TO DO: Make checkbox pretty -->
+                            {{ form.caption }}
                             {{ form.is_public }} - <label>is this public?</label>
                         </div>
                         <div class="modal-footer">
@@ -38,42 +34,31 @@
                     </div>
                   </div>
                 </div>
-                <br>
-                
-                <!-- add seemless prompt of groups to display. consider secondary navbar for photo and groups  -->
-                <div class="card mx-auto justify-content-center align-items-center" style="width: 400px;">
-                    {% for entity in groups %}
-                        <span class="badge badge-pill badge-secondary">{{ entity }}</span>
-                    {% endfor groups %}
-                
-                </div>
-                <br>
-
-                <!-- loop through all images of users in group that are public -->
+        </div>
+<!-- <br> -->
+        <div class="row justify-content-center align-items-center">
+            <div class="col">
+                <!-- Hello {{ current_user.username }}! You're in group {{ current_user.group.name }} -->
                 {% for photo in photos %}
-                    <div class="card mx-auto justify-content-center align-items-center" style="width: 400px;">
+                    <div class="card mt-3 mx-auto" style="width: 400px;">
+                        <div class="card-body">
+                            <h6 class="card-subtitle text-muted">
+                                <row>
+                                    by {{ photo.published_by }} {{ photo.published_on|date:"b n h:i A" }}
+                                </row>
+                            </h6>
+                            <!-- <h6 class="card-subtitle text-muted">by {{ photo.published_by }} {{ photo.published_on|date:"D, d M, Y" }}</h6> -->
+                            
+                        </div>
                         <img class="card-img-top" src="{{ photo.photo.url }}">
                         <div class="card-body">
-                            <h3 class="card-title">{{ photo.title }}</h3>
-                            <h6 class="card-subtitle text-muted">by {{ photo.published_by }}</h6>
-                            <!-- add when photo was posted -->
-                        </div>
-                        <!-- <div class="card">
-                            <img class="img-fluid" src="{{ photo.photo.url }}" alt="Card image cap">
-                            <div class="card-body">
-                                <h4 class="card-title">{{ photo.title }}</h4>
-                                <h6 class="card-subtitle mb-2 text-muted"> By {{ photo.published_by}} </h6>
-                            </div>
-                        </div> -->
-                        
+                            <p class="card-title">{{ photo.caption }}</p>
+                        </div>                        
                     </div>
-                    <br>
+                    
                 {% endfor photos %}
-
             </div>
         </div>
     </div>
 
 {% endblock %}
-
-<!--  model queries for user.photos and user.group -->

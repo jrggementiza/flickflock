@@ -7,10 +7,10 @@ class UploadPhotoForm(forms.ModelForm):
         attrs={
             'class': 'form-control-file',
         }))
-    title = forms.CharField(widget=forms.TextInput(
+    caption = forms.CharField(widget=forms.TextInput(
         attrs={
             'class': 'form-control',
-            'placeholder': 'title',
+            'placeholder': 'caption',
         }))
     # is_public = forms.ChoiceField(widget=forms.CheckboxInput(
     #     attrs={
@@ -21,4 +21,4 @@ class UploadPhotoForm(forms.ModelForm):
 
     class Meta:
         model = Photo
-        fields = ('photo', 'title', 'is_public')
+        fields = ('photo', 'caption', 'is_public')

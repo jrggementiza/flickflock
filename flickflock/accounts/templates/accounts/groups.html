@@ -1,4 +1,10 @@
-you're in groups
-- add group create box
-- add group join (request invite) box
-- abstract to own django "groups" app
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+You don't seem to be in a group. Lets change that!
+<a class="btn-lg btn-secondary" href="{% url 'accounts:groupcreate' %}">Create a group!</a>
+<!-- join function sunder construction -->
+<!-- <a class="btn-lg btn-secondary" href="{% url 'accounts:groupjoin' %}">Join a group!</a>  -->
+{% endblock content %}
