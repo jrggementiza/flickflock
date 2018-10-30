@@ -20,8 +20,7 @@
                         {% for field in form %}
                             <div class="form-group">
                                 {{ field.errors }}
-                                <p class="text-left">{{ field.label }}</p>
-                                <p>{{ field }}</p>
+                                {{ field.html_name }} - {{ field }}
                             </div>
                         {% endfor %}
                         <div class="form-group">

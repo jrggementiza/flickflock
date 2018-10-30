@@ -2,9 +2,8 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 
-from django.contrib.sites.models import Site
-from .forms import UserRegistrationForm, GroupCreationForm
-from .models import Person
+from .forms import UserRegistrationForm, GroupCreationForm, GroupJoinForm
+from .models import Person, Group, Membership
 
 
 def signup(request):
@@ -31,8 +30,6 @@ def signup(request):
 
 @login_required
 def groups(request):
-    # create a group?
-    # join a group? request invite
     return render(request, 'accounts/groups.html', {})
 
 
@@ -40,42 +37,54 @@ def groups(request):
 def groups_create(request):
     current_user = request.user
     if request.method == 'POST':
-        form = GroupCreationForm(request.POST, request.FILES)
-        # if group already created invalid
-        if form.is_valid():
-            group = form.save(commit=False)
-            group.name = form.cleaned_data.get('name')
+        group_form = GroupCreationForm(request.POST, request.FILES)
+        # TODO: if group already created invalid
+        if group_form.is_valid():
+            group = group_form.save(commit=False)
+            group.name = group_form.cleaned_data.get('name')
             group.domain = str(group.name + '.' + 'example.com')
             group.save()
-            current_user.group = group
-            current_user.save()
+            new_member = Membership(person=current_user, group=group)
+            new_member.save()
             return redirect('/')
     else:
-        form = GroupCreationForm()
+        group_form = GroupCreationForm()
     context = {
-        'form': form,
+        'group_form': group_form,
         'current_user': current_user,
     }
     return render(request, 'accounts/groups_create.html', context)
 
 
+# if it exists, get the group instance of the group name
+# get the model instance of the current_user
+# assign the current_user to group via membership
 @login_required
 def groups_join(request):
     current_user = request.user
     if request.method == 'POST':
-        # add group validation / password so not everyone can join
-        form = GroupCreationForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save(commit=False)
-            name = form.cleaned_data.get('name')
-            group = Site.objects.get(name=name)
-            current_user.group = group
-            current_user.save()
+        membership_form = GroupJoinForm(request.POST, request.FILES)
+        if membership_form.is_valid():
+            group = membership_form.save(commit=False)
+            # TODO: check if group exists. if not, create group instead?
+            # TODO: add group password
+            group_to_join = Group.objects.get(name=group.name)
+            new_member = Membership(person=current_user, group=group_to_join)
+            new_member.save()
             return redirect('/')
     else:
-        form = GroupCreationForm()
+        membership_form = GroupJoinForm()
     context = {
-        'form': form,
+        'membership_form': membership_form,
         'current_user': current_user,
     }
     return render(request, 'accounts/groups_join.html', context)
+
+
+# TODO: def group_invite
+# invite model
+# group admin can invite
+# email of person to invite
+# invite code, so some form of hash link
+# on click, reroutes to sign up page
+# auto joins to group invited

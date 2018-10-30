@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 
-from accounts.models import Person
+from accounts.models import Person, Group, Membership
 from accounts.forms import UserRegistrationForm
 from .models import Photo
 from .forms import UploadPhotoForm
@@ -29,10 +29,13 @@ def index(request):
         }
         return render(request, 'flockstream/splash.html', context)
     else:
-        if current_user.group is None:
+        # TODO: render memberships in a toggle to view / not view
+        memberships = Membership.objects.all().filter(person=current_user)
+        if not memberships:
             redirect_url = 'groups/'
             return redirect(redirect_url)
-        photos = Photo.objects.filter(published_by__group=current_user.group).filter(is_public=True).order_by('-published_on')
+        # TODO: publish on which groups? ManyToMany Field
+        photos = Photo.objects.filter(published_by=current_user).filter(is_public=True).order_by('-published_on')
         if request.method == "POST":
             photo_form = UploadPhotoForm(request.POST, request.FILES)
             if photo_form.is_valid():
@@ -45,6 +48,7 @@ def index(request):
         context = {
             'current_user': current_user,
             'form': photo_form,
+            'memberships': memberships,
             'photos': photos,
         }
         return render(request, 'flockstream/index.html', context)

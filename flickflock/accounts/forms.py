@@ -1,8 +1,7 @@
 from django import forms
 from django.forms import ModelForm
 
-from .models import Person #, Group
-from django.contrib.sites.models import Site
+from .models import Person, Group, Membership
 from django.contrib.auth.forms import UserCreationForm
 
 
@@ -31,11 +30,24 @@ class UserRegistrationForm(UserCreationForm):
 
     class Meta(UserCreationForm.Meta):
         model = Person
-        fields = ('username', 'email', 'password1', 'password2')
+        fields = ('username', 'email', 'password1',)
 
 
 class GroupCreationForm(ModelForm):
+    name = forms.CharField(widget=forms.TextInput(
+        attrs={
+            'class': 'form-control',
+            'placeholder': 'group name',
+        }))
 
     class Meta():
-        model = Site
+        model = Group
+        fields = ('name',)
+
+
+class GroupJoinForm(ModelForm):
+    # TODO: group password
+
+    class Meta():
+        model = Group
         fields = ('name',)

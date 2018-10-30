@@ -7,12 +7,12 @@
   Join a group!
     <form method="post">
     {% csrf_token %}
-    {% for field in form %}
+    {% for field in membership_form %}
         <div>
             {{ field.errors }}
             {{ field.html_name}} - {{ field }}
         </div>
         {% endfor %}
-        <button type="submit">Create Group!</button>
+        <button type="submit">Join Group!</button>
     </form>
 {% endblock %}}

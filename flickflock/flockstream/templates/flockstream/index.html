@@ -7,6 +7,11 @@
     <!-- Modal for upload-->
     <!-- TO DO: replace button with "upload icon" like + from fontawesome -->
     <!-- TO DO: Make checkbox pretty -->
+    Hello {{ current_user }}!
+    You belong in the following groups!
+    {% for membership in memberships %}
+        {{ membership.group }}
+    {% endfor memberships %}
     <div class="container h-100">
         <div class="row justify-content-center align-items-center">
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#photo_upload">

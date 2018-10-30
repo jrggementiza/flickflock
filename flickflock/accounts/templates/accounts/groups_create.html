@@ -4,15 +4,14 @@
 
 {% block content %}
   Hello! {{ current_user }}!
-  You're in group {{ current_user.group }}
     <form method="post">
     {% csrf_token %}
-    {% for field in form %}
+    {% for field in group_form %}
         <div>
             {{ field.errors }}
             {{ field.html_name}} - {{ field }}
         </div>
-        {% endfor %}
+    {% endfor %}
         <button type="submit">Create Group!</button>
     </form>
 {% endblock %}}
