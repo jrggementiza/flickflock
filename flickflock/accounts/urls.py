@@ -11,4 +11,5 @@ urlpatterns = [
     path('groups/', accounts_views.groups, name="groups"),
     path('groups/create', accounts_views.groups_create, name="groupcreate"),
     path('groups/join', accounts_views.groups_join, name="groupjoin"),
+    path('groups/invite', accounts_views.groups_invite, name="groupinvite"),
 ]

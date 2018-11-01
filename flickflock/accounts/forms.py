@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import ModelForm
 
-from .models import Person, Group, Membership
+from .models import Person, Group, Membership, Invite
 from django.contrib.auth.forms import UserCreationForm
 
 
@@ -51,3 +51,9 @@ class GroupJoinForm(ModelForm):
     class Meta():
         model = Group
         fields = ('name',)
+
+class GroupInviteForm(ModelForm):
+
+    class Meta():
+        model = Invite
+        fields = ('email',)

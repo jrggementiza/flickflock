@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+
+    <div class="container h-100">
+        <div class="row h-100 justify-content-center align-items-center">
+            <div class="col mx-auto text-center">
+                <div class="card mx-auto justify-content-center align-items-center" style="height: 50vh; width: 400px;">
+                    <form class="form" method="post">
+                        {% for group in groups_with_invite_access %}
+                            {{ group.group }}
+                        {% endfor groups_with_invite_access %}
+                        {% csrf_token %}
+                        {% for field in form %}
+                            <div class="form-group">
+                                {{ field.errors }}
+                                {{ field.html_name }} - {{ field }}
+                            </div>
+                        {% endfor form %}
+                        <div class="form-group">
+                            <button type="submit" class="btn-lg btn-block btn-primary">Invite!</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
