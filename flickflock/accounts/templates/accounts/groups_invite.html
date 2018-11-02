@@ -9,9 +9,6 @@
             <div class="col mx-auto text-center">
                 <div class="card mx-auto justify-content-center align-items-center" style="height: 50vh; width: 400px;">
                     <form class="form" method="post">
-                        {% for group in groups_with_invite_access %}
-                            {{ group.group }}
-                        {% endfor groups_with_invite_access %}
                         {% csrf_token %}
                         {% for field in form %}
                             <div class="form-group">
@@ -19,9 +16,19 @@
                                 {{ field.html_name }} - {{ field }}
                             </div>
                         {% endfor form %}
+                        
                         <div class="form-group">
                             <button type="submit" class="btn-lg btn-block btn-primary">Invite!</button>
                         </div>
+
+                        {% for group in groups_with_invite_access %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="group" id="group" value="{{ group.group }}">
+                            <label class="form-check-label" for="group">
+                                {{ group.group }}
+                            </label>
+                        </div>
+                        {% endfor group %}
                     </form>
                 </div>
             </div>

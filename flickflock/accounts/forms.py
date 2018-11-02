@@ -52,6 +52,7 @@ class GroupJoinForm(ModelForm):
         model = Group
         fields = ('name',)
 
+
 class GroupInviteForm(ModelForm):
 
     class Meta():

@@ -38,4 +38,12 @@ class Membership(models.Model):
 class Invite(models.Model):
     email = models.EmailField(unique=True, verbose_name='e-mail address')
     invite_date = models.DateTimeField(auto_now_add=True)
-    # TODO: Generate Invite Link
+
+    # TODO: Attributes
+    # group_to_join = Group Instance
+    # invited_by = Person Instance
+    # invite_link = generate_invite_token()
+
+    # TODO: Methods
+    # generate_invite_token()
+    # send_email()
