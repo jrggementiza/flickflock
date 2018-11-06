@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 
 from .forms import UserRegistrationForm, GroupCreationForm, GroupJoinForm, GroupInviteForm
-from .models import Person, Group, Membership
+from .models import Person, Group, Membership, Invite
 
 
 def signup(request):
@@ -38,7 +38,7 @@ def groups_create(request):
     current_user = request.user
     if request.method == 'POST':
         group_form = GroupCreationForm(request.POST, request.FILES)
-        # TODO: if group already created invalid
+        # TODO: if group already created, prompt group name already taken
         if group_form.is_valid():
             group = group_form.save(commit=False)
             group.name = group_form.cleaned_data.get('name')
@@ -63,7 +63,7 @@ def groups_join(request):
         membership_form = GroupJoinForm(request.POST, request.FILES)
         if membership_form.is_valid():
             group = membership_form.save(commit=False)
-            # TODO: check if group exists. if not, create group instead
+            # TODO: check if group exists. if not, prompt if they want to create group instead
             # TODO: add group password
             group_to_join = Group.objects.get(name=group.name)
             new_member = Membership(person=current_user, group=group_to_join)
@@ -78,38 +78,28 @@ def groups_join(request):
     return render(request, 'accounts/groups_join.html', context)
 
 
-# def group_join_via_email(request):
-    # if doesnt have an account, redirects to signup and stores 'next' value to here
-    # gets values from invite object
-    # uses invite object values for creating membership
-
-
 @login_required
 def groups_invite(request):
     current_user = request.user
     groups_with_invite_access = Membership.objects.filter(person=current_user).filter(can_invite=True)
     if not groups_with_invite_access:
         # TODO: better prompt that you're not allowed to invite people
-        print('you cant seem to invite people into any groups')
+        prompt = 'You are not allowed to invite people in the group!'
         return redirect('/')
     if request.method == 'POST':
         form = GroupInviteForm(request.POST, request.FILES)
         if form.is_valid():
             person_to_invite = form.save(commit=False)
-            # TODO: prompt if this email has already been invited
-
-            # TODO: make this part of the model.form
             group_name = request.POST['group']
             group_object = Group.objects.get(name=group_name)
-
-            # TODO: Add model attributes assignment
-            # person_to_invite.group = group_object
-            # person_to_invite.invited_by = current_user
-            # person_to_invite.invite_link = generate_invite_token()
-            # person_to_invite.save()
-            # person_to_invite.send_email()
             
-            print(f'{person_to_invite.email} has been invited by {current_user} to join {group_name} on {person_to_invite.invite_date}')
+            person_to_invite.generate_invite_token()
+            person_to_invite.group_to_join = group_object
+            person_to_invite.invited_by = current_user
+            person_to_invite.save()
+            person_to_invite.send()
+            # TODO: prompt that invite was sent!
+            prompt = 'Invite successfully sent to {person_to_invite.email}!'
             return redirect('/')
     else:
         form = GroupInviteForm()
@@ -119,30 +109,25 @@ def groups_invite(request):
     }
     return render(request, 'accounts/groups_invite.html', context)
 
-## [*] 1. model.form and template
-# select from a radio list of groups that allows you to invite people
-# input the email you want to invite
 
-## [*] 2. group_invite
-# if form is valid
-# create Invite object with attributes:
-# - email of the person to be invited
-# - invite date = autonow
-# - store the group to join
-# - store the person who invited = current_user
-# - generate an invite link
-# email the invite link to the person to invite with attributes: from current_user and what group to join
+@login_required
+def groups_join_via_email(request, invite_link):
+    # TODO: if not logged in or if doesnt have an account, redirects to login / signup. 'next' points back to 'group_join_via_email'
+    current_user = request.user
+    try:
+        invite = Invite.objects.get(invite_link=invite_link, activated_link=False)
+    except Invite.DoesNotExist:
+        raise Http404("I does not exist")
+    invite.activated_link = True
+    invite.save()
 
-## 3. group_join_via_email
-# if not logged in or if doesnt have an account, redirects to login / signup. 'next' points to 'group_join_via_email'
-# gets values from invite object using the invite link
-# uses invite object values for creating membership
-# login user
-
-
-
-
-
-
-
-
+    group_to_join = invite.group_to_join
+    new_member, created = Membership.objects.get_or_create(person=current_user, group=group_to_join)
+    if created:
+        # TODO: prompt already in the group!, pass the prompt to the index as a popup context
+        prompt = '{new_member.person} has ALREADY joined {new_member.group}!'
+    else:
+        new_member.save()
+        # TODO: prompt of successful join
+        prompt = '{new_member.person} has joined {new_member.group}!'
+    return redirect('/')

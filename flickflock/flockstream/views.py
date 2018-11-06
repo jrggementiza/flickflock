@@ -8,7 +8,8 @@ from .models import Photo
 from .forms import UploadPhotoForm
 
 
-def index(request):
+def index(request, prompt):
+    print(prompt)
     current_user = request.user
     if not request.user.is_authenticated:
         if request.method == 'POST':

@@ -12,4 +12,5 @@ urlpatterns = [
     path('groups/create', accounts_views.groups_create, name="groupcreate"),
     path('groups/join', accounts_views.groups_join, name="groupjoin"),
     path('groups/invite', accounts_views.groups_invite, name="groupinvite"),
+    path('groups/join/<invite_link>', accounts_views.groups_join_via_email, name="groupjoinviaemail"),
 ]
